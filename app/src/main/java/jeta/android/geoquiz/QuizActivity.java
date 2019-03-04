@@ -47,14 +47,14 @@ public class QuizActivity extends AppCompatActivity {
         Log.d(TAG, "onCreate(Bundle) calledz");
         setContentView(R.layout.activity_quiz);
 
-        mTrueButton = (Button) findViewById(R.id.true_button);
-        mFalseButton = (Button) findViewById(R.id.false_button);
-        mNextButton = (ImageButton) findViewById(R.id.next_button);
-        mPrevButton = (ImageButton) findViewById(R.id.previous_button);
-        mQuestionTextView = (TextView) findViewById(R.id.question_text);
-        mFinishButton = (Button) findViewById(R.id.finish);
-        mRepeatLayout = (LinearLayout) findViewById(R.id.repeat);
-        mRepeatButton = (Button) findViewById(R.id.play);
+        mTrueButton = findViewById(R.id.true_button);
+        mFalseButton =  findViewById(R.id.false_button);
+        mNextButton =  findViewById(R.id.next_button);
+        mPrevButton =  findViewById(R.id.previous_button);
+        mQuestionTextView =  findViewById(R.id.question_text);
+        mFinishButton =  findViewById(R.id.finish);
+        mRepeatLayout =  findViewById(R.id.repeat);
+        mRepeatButton =  findViewById(R.id.play);
 
         if (savedInstanceState != null) {
             mCurrentIndex = savedInstanceState.getInt(KEY_INDEX, 0);

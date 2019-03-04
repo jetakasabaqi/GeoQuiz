@@ -46,7 +46,7 @@
 
             <ImageButton
                 android:id="@+id/previous_button"
-                style="?android:attr/buttonBarStyle"
+                style="?android:attr/buttonBarNeutralButtonStyle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:contentDescription="Previous Button"
@@ -57,7 +57,7 @@
 
             <ImageButton
                 android:id="@+id/next_button"
-                style="?android:attr/buttonBarStyle"
+                style="?android:attr/buttonBarNeutralButtonStyle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:contentDescription="Next Button"

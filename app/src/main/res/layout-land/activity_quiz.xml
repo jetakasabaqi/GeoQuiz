@@ -11,7 +11,7 @@
         android:layout_height="wrap_content"
         android:padding="24dp"
         android:text="sssdsdds"
-        android:textSize="18dp"
+        android:textSize="18sp"
         android:layout_gravity="center_horizontal"
         android:textColor="@color/colorPrimaryDark"
         />
@@ -39,9 +39,6 @@
         android:layout_gravity="bottom|right"
         android:layout_height="wrap_content">
 
-
-
-            />
         <ImageButton
             android:id="@+id/next_button"
             android:layout_width="wrap_content"
