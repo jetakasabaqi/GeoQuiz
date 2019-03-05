@@ -1,5 +1,8 @@
 package jeta.android.geoquiz;
 
+import android.app.Activity;
+import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -21,11 +24,22 @@ public class QuizActivity extends AppCompatActivity {
     private Button mFinishButton;
     private LinearLayout mRepeatLayout;
     private Button mRepeatButton;
+    private Button mCheatButton;
 
 
     private static final String TAG = "QuizActivity";
 
     private static final String KEY_INDEX = "index";
+
+    private static final String CHEATER_INDEX = "cheater_index";
+
+    private static final String EXTRA_ANSWER_IS_TRUE = "jeta.android.geoquiz.answer_is_true";
+
+    private static final String EXTRA_ANSWER_SHOWN = "jeta.android.geoquiz.answer_shown";
+
+    private static final int REQUEST_CODE_CHEAT = 0;
+
+    private boolean mIsCheate;
 
 
     private Question[] mQuestionBank = new Question[]{
@@ -48,18 +62,29 @@ public class QuizActivity extends AppCompatActivity {
         setContentView(R.layout.activity_quiz);
 
         mTrueButton = findViewById(R.id.true_button);
-        mFalseButton =  findViewById(R.id.false_button);
-        mNextButton =  findViewById(R.id.next_button);
-        mPrevButton =  findViewById(R.id.previous_button);
-        mQuestionTextView =  findViewById(R.id.question_text);
-        mFinishButton =  findViewById(R.id.finish);
-        mRepeatLayout =  findViewById(R.id.repeat);
-        mRepeatButton =  findViewById(R.id.play);
+        mFalseButton = findViewById(R.id.false_button);
+        mNextButton = findViewById(R.id.next_button);
+        mPrevButton = findViewById(R.id.previous_button);
+        mQuestionTextView = findViewById(R.id.question_text);
+        mFinishButton = findViewById(R.id.finish);
+        mRepeatLayout = findViewById(R.id.repeat);
+        mRepeatButton = findViewById(R.id.play);
+        mCheatButton = findViewById(R.id.cheat_button);
 
         if (savedInstanceState != null) {
             mCurrentIndex = savedInstanceState.getInt(KEY_INDEX, 0);
+            mIsCheate = savedInstanceState.getBoolean(CHEATER_INDEX,false);
         }
 
+
+        mCheatButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                boolean answerIsTrue = mQuestionBank[mCurrentIndex].isAnswerTrue();
+                Intent intent = newIntent(QuizActivity.this, answerIsTrue);
+                startActivityForResult(intent, REQUEST_CODE_CHEAT);
+            }
+        });
         mTrueButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -77,26 +102,28 @@ public class QuizActivity extends AppCompatActivity {
                 mFalseButton.setEnabled(false);
             }
         });
-
-        mRepeatButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mCurrentIndex = 0;
-                mCurrentRes = 0;
-                mRepeatLayout.setVisibility(View.GONE);
-                updateQuestion();
-                mFinishButton.setVisibility(View.GONE);
-                mTrueButton.setEnabled(true);
-                mFalseButton.setEnabled(true);
-                mNextButton.setVisibility(View.VISIBLE);
-            }
-        });
+        if (mRepeatButton != null) {
+            mRepeatButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    mCurrentIndex = 0;
+                    mCurrentRes = 0;
+                    mRepeatLayout.setVisibility(View.GONE);
+                    updateQuestion();
+                    mFinishButton.setVisibility(View.GONE);
+                    mTrueButton.setEnabled(true);
+                    mFalseButton.setEnabled(true);
+                    mNextButton.setVisibility(View.VISIBLE);
+                }
+            });
+        }
 
         mNextButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 mCurrentIndex = (mCurrentIndex + 1) % mQuestionBank.length;
                 updateQuestion();
+                mIsCheate = false;
 
 
                 if (mCurrentIndex == 5) {
@@ -122,8 +149,8 @@ public class QuizActivity extends AppCompatActivity {
 
 
         if (mCurrentIndex == 0) {
-
-            mPrevButton.setVisibility(View.GONE);
+            if (mPrevButton != null)
+                mPrevButton.setVisibility(View.GONE);
 
         } else {
 
@@ -142,6 +169,7 @@ public class QuizActivity extends AppCompatActivity {
 
 
         }
+        if(mFinishButton!=null)
         mFinishButton.setVisibility(View.GONE);
         mQuestionTextView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -150,6 +178,7 @@ public class QuizActivity extends AppCompatActivity {
                 updateQuestion();
             }
         });
+
 
         updateQuestion();
     }
@@ -170,11 +199,16 @@ public class QuizActivity extends AppCompatActivity {
 
         int messageResId = 0;
 
-        if (userPressedTrue == answerIsTrue) {
-            messageResId = R.string.correct_toast;
-            mCurrentRes = mCurrentRes + 1;
+        if (mIsCheate) {
+            messageResId = R.string.judgment_toast;
         } else {
-            messageResId = R.string.incorrect_toast;
+            if (userPressedTrue == answerIsTrue) {
+                messageResId = R.string.correct_toast;
+                mCurrentRes = mCurrentRes + 1;
+            } else {
+                messageResId = R.string.incorrect_toast;
+            }
+
         }
         Toast.makeText(this, messageResId, Toast.LENGTH_SHORT).show();
     }
@@ -220,5 +254,32 @@ public class QuizActivity extends AppCompatActivity {
         super.onSaveInstanceState(outState);
         Log.i(TAG, "onSaveInstanceState");
         outState.putInt(KEY_INDEX, mCurrentIndex);
+        outState.putBoolean(CHEATER_INDEX, mIsCheate);
+    }
+
+    public static Intent newIntent(Context packageContex, boolean answerIsTrue) {
+        Intent intent = new Intent(packageContex, CheatActivity.class);
+        intent.putExtra(EXTRA_ANSWER_IS_TRUE, answerIsTrue);
+        return intent;
+    }
+
+    public static boolean wasAnswerShown(Intent result) {
+        return result.getBooleanExtra(EXTRA_ANSWER_SHOWN, false);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (resultCode != Activity.RESULT_OK) {
+            return;
+        }
+        if (requestCode == REQUEST_CODE_CHEAT) {
+            if (data == null) {
+                return;
+            }
+
+            mIsCheate = wasAnswerShown(data);
+        }
     }
 }

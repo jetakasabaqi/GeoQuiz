@@ -24,8 +24,8 @@
             android:layout_height="wrap_content">
 
             <Button
-                style="?android:attr/buttonBarStyle"
                 android:id="@+id/true_button"
+                style="?android:attr/buttonBarStyle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/true_button" />
@@ -37,7 +37,10 @@
                 android:layout_height="wrap_content"
 
                 android:text="@string/false_button" />
+
         </LinearLayout>
+
+
 
         <LinearLayout
             android:layout_width="wrap_content"
@@ -55,6 +58,7 @@
 
                 />
 
+
             <ImageButton
                 android:id="@+id/next_button"
                 style="?android:attr/buttonBarStyle"
@@ -62,6 +66,9 @@
                 android:layout_height="wrap_content"
                 android:contentDescription="Next Button"
                 android:src="@drawable/arrow_right" />
+
+
+
 
         </LinearLayout>
 
@@ -71,19 +78,21 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="FINISH" />
+
+
     </LinearLayout>
 
     <LinearLayout
         android:id="@+id/repeat"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:visibility="gone"
         android:background="@color/colorPrimaryDark"
-        android:gravity="center">
+        android:gravity="center"
+        android:visibility="gone">
 
         <Button
             android:id="@+id/play"
-            style="?android:attr/buttonBarNeutralButtonStyle"
+
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:gravity="center"
