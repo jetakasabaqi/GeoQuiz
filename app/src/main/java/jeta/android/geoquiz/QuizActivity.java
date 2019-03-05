@@ -25,6 +25,7 @@ public class QuizActivity extends AppCompatActivity {
     private LinearLayout mRepeatLayout;
     private Button mRepeatButton;
     private Button mCheatButton;
+    private TextView mCheatLeftTextView;
 
 
     private static final String TAG = "QuizActivity";
@@ -55,6 +56,8 @@ public class QuizActivity extends AppCompatActivity {
 
     private int mCurrentRes = 0;
 
+    private int mCurrentCheats = 3;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -70,10 +73,16 @@ public class QuizActivity extends AppCompatActivity {
         mRepeatLayout = findViewById(R.id.repeat);
         mRepeatButton = findViewById(R.id.play);
         mCheatButton = findViewById(R.id.cheat_button);
-
+        mCheatLeftTextView = findViewById(R.id.cheats_left_text_view);
+        if (mCurrentCheats == 0) {
+            mCheatButton.setVisibility(View.INVISIBLE);
+            mCheatLeftTextView.setText("No more cheats left!");
+        } else {
+            mCheatLeftTextView.setText(mCurrentCheats + " more cheats left");
+        }
         if (savedInstanceState != null) {
             mCurrentIndex = savedInstanceState.getInt(KEY_INDEX, 0);
-            mIsCheate = savedInstanceState.getBoolean(CHEATER_INDEX,false);
+            mIsCheate = savedInstanceState.getBoolean(CHEATER_INDEX, false);
         }
 
 
@@ -169,8 +178,8 @@ public class QuizActivity extends AppCompatActivity {
 
 
         }
-        if(mFinishButton!=null)
-        mFinishButton.setVisibility(View.GONE);
+        if (mFinishButton != null)
+            mFinishButton.setVisibility(View.GONE);
         mQuestionTextView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -223,12 +232,24 @@ public class QuizActivity extends AppCompatActivity {
     protected void onStart() {
         super.onStart();
         Log.d(TAG, "onStart() calledz");
+        if (mCurrentCheats == 0) {
+            mCheatButton.setVisibility(View.INVISIBLE);
+            mCheatLeftTextView.setText("No more cheats left!");
+        } else {
+            mCheatLeftTextView.setText(mCurrentCheats + " more cheats left");
+        }
     }
 
     @Override
     protected void onResume() {
         super.onResume();
         Log.d(TAG, "onResume() calledz");
+        if (mCurrentCheats == 0) {
+            mCheatButton.setVisibility(View.INVISIBLE);
+            mCheatLeftTextView.setText("No more cheats left!");
+        } else {
+            mCheatLeftTextView.setText(mCurrentCheats + " more cheats left");
+        }
     }
 
     @Override
@@ -280,6 +301,10 @@ public class QuizActivity extends AppCompatActivity {
             }
 
             mIsCheate = wasAnswerShown(data);
+
+            if (mIsCheate) {
+                mCurrentCheats = mCurrentCheats - 1;
+            }
         }
     }
 }
